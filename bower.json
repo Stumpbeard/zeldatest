@@ -1,0 +1,14 @@
+{
+    "name": "ptest",
+    "description": "",
+    "main": "index.js",
+    "authors": [
+        "Stump <stumpbeard@gmail.com>"
+    ],
+    "license": "ISC",
+    "homepage": "",
+    "private": true,
+    "dependencies": {
+        "phaser": "^2.6.2"
+    }
+}
