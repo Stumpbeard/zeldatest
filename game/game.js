@@ -1,4 +1,4 @@
-var game = new Phaser.Game(160, 144, Phaser.CANVAS, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(160, 144, Phaser.CANVAS, '', { preload: preload, create: create, update: update, redner: render });
 
 var link;
 var collisions;
@@ -25,6 +25,7 @@ function create() {
 
     link = game.add.sprite(64, 36, 'link');
     game.physics.arcade.enable(link);
+    link.body.setSize(8, 10, 4, 6);
     link.body.collideWorldBounds = true;
     link.animations.add('walkDown', [4, 0], 8, true);
     link.animations.add('walkLeft', [5, 1], 8, true);
@@ -45,7 +46,6 @@ function update() {
     // player movement
     link.body.velocity.x = 0;
     link.body.velocity.y = 0;
-    console.log(link.animations.currentAnim.paused);
     if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
         link.body.velocity.y = speed;
         link.animations.play('walkDown');
@@ -67,6 +67,11 @@ function update() {
         link.animations.currentAnim.frame = 1;
         link.animations.stop();
     }
+}
+
+function render() {
+    // game.debug.bodyInfo(link, 32, 32);
+    // game.debug.body(link);
 }
 
 function room1() {
@@ -111,4 +116,24 @@ function room1() {
     bed2.scale.x = 16;
     bed2.scale.y = 32;
     bed2.body.immovable = true;
+
+    var cabinet = collisions.create(112, 16);
+    cabinet.scale.x = 16;
+    cabinet.scale.y = 8;
+    cabinet.body.immovable = true;
+
+    var boxes = collisions.create(128, 16);
+    boxes.scale.x = 16;
+    boxes.scale.y = 32;
+    boxes.body.immovable = true;
+
+    var seats = collisions.create(128, 64);
+    seats.scale.x = 16;
+    seats.scale.y = 48;
+    seats.body.immovable = true;
+
+    var table = collisions.create(112, 80);
+    table.scale.x = 32;
+    table.scale.y = 16;
+    table.body.immovable = true;
 }
