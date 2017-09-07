@@ -16,6 +16,11 @@ function preload() {
     game.load.spritesheet('link', 'assets/char/link_spritesheet16x16.png', 16, 16, 8);
 }
 
+var keyUp;
+var keyDown;
+var keyLeft;
+var keyRight;
+
 function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
     collisions = game.add.group();
@@ -28,39 +33,75 @@ function create() {
     link.body.setSize(8, 10, 4, 6);
     link.body.collideWorldBounds = true;
     link.animations.add('walkDown', [4, 0], 8, true);
+    keyDown = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+    keyDown.onUp.add(function() {
+        link.animations.stop();
+    });
     link.animations.add('walkLeft', [5, 1], 8, true);
+    keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+    keyLeft.onUp.add(function() {
+        link.animations.stop();
+    });
     link.animations.add('walkRight', [6, 2], 8, true);
+    keyRight = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+    keyRight.onUp.add(function() {
+        link.animations.stop();
+    });
     link.animations.add('walkUp', [7, 3], 8, true);
+    keyUp = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+    keyUp.onUp.add(function() {
+        link.animations.stop();
+    });
     link.animations.currentAnim = link.animations.getAnimation('walkRight');
 }
 
 var speed = 60;
 
 function update() {
+    console.log(keyDown);
     game.physics.arcade.collide(link, collisions);
 
     if (game.input.mousePointer.isDown) {
         console.log(Math.floor(game.input.activePointer.x) + " " + Math.floor(game.input.activePointer.y));
     }
 
+    var yCancel = false;
+    var xCancel = false;
+
+    if (keyUp.isDown && keyDown.isDown) {
+        if (!(keyRight.isDown || keyLeft.isDown)) {
+            link.animations.currentAnim.frame = 1;
+            link.animations.stop();
+        }
+        yCancel = true;
+    }
+
+    if (keyRight.isDown && keyLeft.isDown) {
+        if (!(keyUp.isDown || keyDown.isDown)) {
+            link.animations.currentAnim.frame = 1;
+            link.animations.stop();
+        }
+        xCancel = true;
+    }
+
     // player movement
     link.body.velocity.x = 0;
     link.body.velocity.y = 0;
     if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
-        link.body.velocity.y = speed;
-        link.animations.play('walkDown');
+        link.body.velocity.y += speed;
+        if (!link.animations.currentAnim.isPlaying && !yCancel) link.animations.play('walkDown');
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
-        link.body.velocity.y = -speed;
-        link.animations.play('walkUp');
+        link.body.velocity.y -= speed;
+        if (!link.animations.currentAnim.isPlaying && !yCancel) link.animations.play('walkUp');
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-        link.body.velocity.x = speed;
-        link.animations.play('walkRight');
+        link.body.velocity.x += speed;
+        if (!link.animations.currentAnim.isPlaying && !xCancel) link.animations.play('walkRight');
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-        link.body.velocity.x = -speed;
-        link.animations.play('walkLeft');
+        link.body.velocity.x -= speed;
+        if (!link.animations.currentAnim.isPlaying && !xCancel) link.animations.play('walkLeft');
     }
 
     if (!(game.input.keyboard.isDown(Phaser.Keyboard.DOWN) || game.input.keyboard.isDown(Phaser.Keyboard.UP) || game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || game.input.keyboard.isDown(Phaser.Keyboard.LEFT))) {
