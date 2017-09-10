@@ -58,7 +58,6 @@ function create() {
 var speed = 60;
 
 function update() {
-    console.log(keyDown);
     game.physics.arcade.collide(link, collisions);
 
     if (game.input.mousePointer.isDown) {
